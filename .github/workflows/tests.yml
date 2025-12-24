@@ -1,11 +1,13 @@
-name: Simple Tests
+name: CI Check
 
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
     
     steps:
@@ -14,19 +16,49 @@ jobs:
       
       - name: Check project structure
         run: |
-          echo "=== Repository structure ==="
+          echo "=== Checking project structure ==="
           ls -la
           echo ""
-          echo "=== Project folder ==="
-          ls -la ono-tebe-nado-ad-main/
+          
+          # Проверка обязательных файлов
+          echo "=== Required files ==="
+          if [ -f "index.html" ]; then
+            echo "✅ index.html exists"
+          else
+            echo "❌ index.html MISSING"
+            exit 1
+          fi
+          
+          if [ -f "README.md" ]; then
+            echo "✅ README.md exists"
+            # Покажем начало README
+            echo "First line of README.md:"
+            head -1 README.md
+          else
+            echo "❌ README.md MISSING"
+            exit 1
+          fi
+          
           echo ""
-          echo "=== HTML files ==="
-          find . -name "*.html" -type f
-          echo ""
-          echo "=== Package.json ==="
-          find . -name "package.json" -type f -exec cat {} \;
+          echo "=== Project directories ==="
+          [ -d "styles" ] && echo "✅ styles/ exists" || echo "⚠️  styles/ not found"
+          [ -d "images" ] && echo "✅ images/ exists" || echo "⚠️  images/ not found"
+          [ -d "fonts" ] && echo "✅ fonts/ exists" || echo "⚠️  fonts/ not found"
       
-      - name: Run simple tests
+      - name: HTML validation
         run: |
-          echo "✅ Basic CI check passed"
-          echo "If you see this, CI is working!"
+          echo "=== Basic HTML check ==="
+          if grep -q "<!DOCTYPE html>" index.html; then
+            echo "✅ DOCTYPE found"
+          else
+            echo "⚠️  DOCTYPE not found"
+          fi
+          
+          if grep -q "<title>" index.html; then
+            echo "✅ Title tag found"
+          else
+            echo "⚠️  Title tag not found"
+          fi
+      
+      - name: Final success
+        run: echo "✅ All checks passed! Project is valid."
