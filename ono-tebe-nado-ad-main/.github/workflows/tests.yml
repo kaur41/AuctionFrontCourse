@@ -1,22 +1,31 @@
-name: Tests
+name: Yandex Practicum Tests
 
 on:
   push:
-    branches:
-      - '**'
-    tags:
-      - '**'
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  tests:
+  yandex-tests:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
-      - name: Check if the repository is private
-        run: exit 1
-        if: ${{github.event.repository.private}}
-      - name: Tests
+        with:
+          path: 'project-folder'
+      
+      - name: Debug info
+        run: |
+          echo "Working directory: $(pwd)"
+          ls -la
+          echo "Project folder contents:"
+          ls -la project-folder/
+      
+      - name: Run Yandex tests
         uses: Yandex-Practicum/test-project-action@v1
         with:
-          project: 'ono-tebe-nado-ad'
+          # Попробуйте разные варианты имени проекта:
+          project: 'AuctionFrontCourse'  # Или попробуйте: 'auction-front-lab'
+          # Или: 'ono-tebe-nado-ad-main'
