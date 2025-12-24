@@ -29,4 +29,8 @@ jobs:
       - name: Run simple tests
         run: |
           echo "✅ Basic CI check passed"
+<<<<<<< HEAD
           echo "If you see this, CI is working!"
+=======
+          echo "If you see this, CI is working!"
+>>>>>>> 8ecbac305b93726e2927e6696c9b8b4f1e34e2b0
